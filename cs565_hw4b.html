@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+	<title>CS 565 HW 4b</title>
+
+	<style type="text/css">
+		/* Your CSS goes here. You can change the code below if needed. */
+		html {
+			height: 100%;
+		}
+
+		body {
+			background-color: #dddddd;
+			height: 100%;
+			margin: 0;
+		}
+
+		#wrap {
+			background-color: white;
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			width: 1200px;
+		}
+
+		#header-for-cs565 {
+			background-color: #555555;
+			color: #ffffff;
+			font-family: Arial;
+			font-size: 12px;
+			padding: 5px 10px;
+		}
+
+		#app {
+			padding: 5px;
+		}
+
+		/* Header/Logo Title */
+		.header {
+			background: #D73F09;
+			color: white;
+			font-size: 30px;
+			height: 85px;
+			display: flex;
+			align-items: center;
+		}
+
+		.main-logo {
+			width: 20%;
+			padding: 5px;
+		}
+
+		.profile-icon {
+			float: Right;
+			margin-left: 900px;
+		}
+
+		.second-header {
+			background: #D73F09;
+			color: black;
+			font-size: 10px;
+			height: 30px;
+			display: flex;
+			align-items: center;
+			padding-left: 70px;
+		}
+
+		.flex-row {
+			display: flex;
+			flex-direction: row;
+		}
+
+		.third-header {
+			background: #d85728;
+			color: white;
+			font-size: 10px;
+			height: 30px;
+			display: flex;
+			align-items: center;
+			padding-left: 35px;
+		}
+
+		.dropdown {
+			position: relative;
+			display: inline-block;
+		}
+
+		.dropdown-content {
+			display: none;
+			position: absolute;
+			background-color: #f1f1f1;
+			min-width: 160px;
+			box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+			z-index: 1;
+		}
+
+		.dropdown-content a {
+			color: black;
+			padding: 12px 16px;
+			text-decoration: none;
+			display: block;
+		}
+
+		.dropdown-content a:hover {
+			background-color: #ddd;
+		}
+
+		.dropdown:hover .dropdown-content {
+			display: block;
+		}
+
+		.dropdown:hover .dropbtn {
+			background-color: #e4e4e4;
+		}
+
+		.time-table-title {
+			margin-left: 400px;
+		}
+
+		/* Table */
+		table {
+			font-family: arial, sans-serif;
+			border-collapse: collapse;
+			width: 100%;
+		}
+
+		th {
+			text-align: left;
+			padding: 8px;
+			background-color: #d87f5f;
+			color: white;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		td {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 5px;
+			height: 70px;
+			position: relative;
+		}
+
+		tr:hover {
+			background-color: #BDE3FF;
+		}
+
+		.courses-table {
+			width: 50%;
+			border-right: double;
+			table-layout: fixed;
+		}
+
+		.schedule-table {
+			background-color: rgb(255, 197, 174);
+			width: 50%;
+			table-layout: fixed;
+		}
+
+		.first-col {
+			width: 10px;
+		}
+
+		.first-td-course {
+			color: rgb(0, 81, 255);
+			font-family: "Lucida Console", "Courier New", monospace;
+			font-weight: normal;
+			font-size: 20px;
+		}
+
+		.second-td-course {
+			font-weight: normal;
+			font-size: 20px;
+		}
+
+		.major-title {
+			margin-left: 142px;
+		}
+
+		.first-td-schedule {
+			color: rgb(255, 102, 0);
+			font-family: "Lucida Console", "Courier New", monospace;
+			font-weight: normal;
+			font-size: 20px;
+		}
+
+		.two-hour-course-box {
+			background-color: rgb(255, 60, 0);
+			color: white;
+			width: 85px;
+			height: 148px;
+			border: 0.3px;
+			border-color: black;
+			border-style: solid;
+			position: absolute;
+			word-wrap: break-word;
+			top: 5px;
+		}
+
+		.two-hour-course-box-conflicting {
+			background-color: rgb(255, 60, 0);
+			color: white;
+			width: 42px;
+			height: 148px;
+			border: 0.3px;
+			border-color: black;
+			border-style: solid;
+			position: absolute;
+			word-wrap: break-word;
+			top: 5px;
+		}
+
+		.one-hour-course-box {
+			background-color: rgb(248, 157, 130);
+			color: white;
+			width: 85px;
+			height: 70px;
+			border: 0.3px;
+			border-color: black;
+			border-style: dashed;
+			position: absolute;
+			word-wrap: break-word;
+			top: 5px;
+		}
+
+		.one-hour-course-box-conflicting {
+			background-color: rgb(248, 157, 130);
+			color: white;
+			width: 42px;
+			height: 70px;
+			border: 0.3px;
+			border-color: black;
+			border-style: dashed;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 43px;
+			top: 5px;
+		}
+	</style>
+
+</head>
+
+<body>
+	<!-- Your HTML goes here. You can change the code below if needed. -->
+	<div id="wrap">
+		<div id="header-for-cs565">
+			CS 565 HW 4b (Name: Delyar Tabatabai)
+		</div>
+
+		<div id="app">
+			<div class="header">
+				<img class="main-logo" src="https://oregonstate.edu/themes/osu/homepage/logo.svg" alt="logo" />
+				<i class="fa fa-user profile-icon"></i>
+			</div>
+			<div class="second-header">
+				<h1>Class Search Portal</h1>
+			</div>
+			<div class="third-header flex-row">
+				<h1>Term:</h1>
+				<div class="dropdown">
+					<button class="dropbtn">Spring 2021</button>
+					<div class="dropdown-content">
+						<a href="#">Fall 2021</a>
+						<a href="#">Winter 2022</a>
+						<a href="#">Spring 2022</a>
+					</div>
+				</div>
+				<h1 class="major-title">Major:</h1>
+				<div class="dropdown">
+					<button class="dropbtn">CS</button>
+					<div class="dropdown-content">
+						<a href="#">Chemistry</a>
+						<a href="#">Physics</a>
+						<a href="#">Math</a>
+					</div>
+				</div>
+				<h1 class="time-table-title">Your Time Table</h1>
+
+			</div>
+			<div class="flex-row">
+				<table class="courses-table">
+					<tr>
+						<th class="first-col"></th>
+						<th>Code</th>
+						<th>Title</th>
+						<th>Instructor</th>
+						<th>Time</th>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="course1" name="" value="">
+						</td>
+						<td class="first-td-course">CS 517</td>
+						<td class="second-td-course">Theory Of Computation</td>
+						<td>M. Rosulek</td>
+						<td>MWF 2-3</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="course2" name="" value="">
+						</td>
+						<td class="first-td-course">CS 533</td>
+						<td class="second-td-course">Intelligent Agents</td>
+						<td>A. Fern</td>
+						<td>MW 10-12</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="course3" name="" value="">
+						</td>
+						<td class="first-td-course">CS 551</td>
+						<td class="second-td-course">Computer Graphics</td>
+						<td>E. Zhang</td>
+						<td>MW 12-2</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="course4" name="" value="">
+						</td>
+						<td class="first-td-course">CS 531</td>
+						<td class="second-td-course">Artifitial Intelligence</td>
+						<td>P. Tadepalli</td>
+						<td>MWF 12-1</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="course2" name="" value="">
+						</td>
+						<td class="first-td-course">CS 517</td>
+						<td class="second-td-course">Theory Of Computation</td>
+						<td>M. Rosulek</td>
+						<td>MWF 2-3</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="course2" name="" value="">
+						</td>
+						<td class="first-td-course">CS 517</td>
+						<td class="second-td-course">Theory Of Computation</td>
+						<td>M. Rosulek</td>
+						<td>MWF 2-3</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="course2" name="" value="">
+						</td>
+						<td class="first-td-course">CS 517</td>
+						<td class="second-td-course">Theory Of Computation</td>
+						<td>M. Rosulek</td>
+						<td>MWF 2-3</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="course#" name="" value="">
+						</td>
+						<td class="first-td-course">CS 517</td>
+						<td class="second-td-course">Theory Of Computation</td>
+						<td>M. Rosulek</td>
+						<td>MWF 2-3</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="course#" name="" value="">
+						</td>
+						<td class="first-td-course">CS 517</td>
+						<td class="second-td-course">Theory Of Computation</td>
+						<td>M. Rosulek</td>
+						<td>MWF 2-3</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="course#" name="" value="">
+						</td>
+						<td class="first-td-course">CS 517</td>
+						<td class="second-td-course">Theory Of Computation</td>
+						<td>M. Rosulek</td>
+						<td>MWF 2-3</td>
+					</tr>
+				</table>
+				<table class="schedule-table">
+					<tr>
+						<th></th>
+						<th>Mon</th>
+						<th>TUE</th>
+						<th>WED</th>
+						<th>THU</th>
+						<th>FRI</th>
+					</tr>
+					<tr>
+						<td class="first-td-schedule">9 AM</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="first-td-schedule">10 AM</td>
+						<td>
+							<div class="two-hour-course-box">CS 533 Intelligent Agents</div>
+						</td>
+						<td></td>
+						<td>
+							<div class="two-hour-course-box">CS 533 Intelligent Agents</div>
+						</td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="first-td-schedule">11 AM</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="first-td-schedule">12 PM</td>
+						<!-- Monday -->
+						<td> 
+							<div class="two-hour-course-box-conflicting">CS 551 Computer Graphics</div>
+							<span class="one-hour-course-box-conflicting">CS 531 Artif...</span>
+						</td>
+						<!-- TUE -->
+						<td></td>
+						<!-- Wed -->
+						<td>
+							<div class="two-hour-course-box-conflicting">CS 551 Computer Graphics</div>
+							<span class="one-hour-course-box-conflicting">CS 531 Artif...</span>
+						</td>
+						<!-- THU -->
+						<td></td>
+						<!-- FRI -->
+						<td>
+							<span class="one-hour-course-box">CS 531 Artiftial Intelligence</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="first-td-schedule">1 PM</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="first-td-schedule">2 PM</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="first-td-schedule">3 PM</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="first-td-schedule">4 PM</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="first-td-schedule">5 PM</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="first-td-schedule">6 PM</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+
+
+	<script type="text/javascript">
+		var app = new Vue({
+			el: '#wrap',
+			data: {
+				placeholder_message: "Delyar Tabatabai!",
+			},
+
+			beforeMount() {
+				fetch("cs565_hw4c_schedule_data.json")
+					.then(response => response.json())
+					.then(data => {
+						console.log("data", data);
+					})
+			},
+
+			methods: {
+				clickLike: function (index) {
+					
+				},
+			}
+		});
+	</script>
+</body>
+
+</html>

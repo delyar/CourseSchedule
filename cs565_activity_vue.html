@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="In-class activity materials for CS 565 at Oregon State University">
+	<meta name="author" content="Minsuk Kahng and Delyar Tabatabai">
+
+	<title>CS 565 Activity</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+	<style type="text/css">
+		html,
+		body {
+			height: 100%;
+		}
+
+		#twitter-main-page {
+			display: flex;
+			height: 100%;
+			background-color: whitesmoke;
+		}
+
+		#timeline {
+			width: 600px;
+			background-color: antiquewhite;
+		}
+
+		.tweet {
+			border: 2px solid rgb(220, 220, 220);
+			background-color: beige;
+		}
+
+		.tweet-footer-info {
+			display: flex;
+		}
+
+		#sidebar {
+			width: 200px;
+			margin-left: 20px;
+			background-color: rgb(200, 230, 255);
+		}
+
+		.tweet-text {
+			font-size: 20px;
+		}
+
+		#sidebar span.clickable {
+			cursor: pointer;
+		}
+
+		.marked-message {
+			color: red;
+		}
+
+		.profile-img {
+			max-width: 80px;
+			max-height: 80px;
+			width: auto;
+			height: auto;
+			border-radius: 50%;
+		}
+
+		.btn {
+			border: none;
+			color: rgb(136, 183, 255);
+			padding: 12px 16px;
+			font-size: 16px;
+			cursor: pointer;
+			margin-right: 10px;
+			border-radius: 50%;
+		}
+
+		.liked-btn{
+			border: none;
+			color: rgb(255, 0, 149);
+			padding: 12px 16px;
+			font-size: 16px;
+			cursor: pointer;
+			margin-right: 10px;
+			border-radius: 50%;
+		}
+
+		.notliked-btn{
+			border: none;
+			color: blue;
+			padding: 12px 16px;
+			font-size: 16px;
+			cursor: pointer;
+			margin-right: 10px;
+			border-radius: 50%;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="twitter-main-page">
+		<div id="timeline">
+			<h3>Tweets</h3>
+			<ul>
+				<li v-for="(tweet, index) in tweets">
+					<div class="tweet">
+						<img class="profile-img"
+							src="https://pbs.twimg.com/profile_images/856629049547935744/ScErYmP0_400x400.jpg">
+						<div class="tweet-text">
+							{{ tweet.text }}
+						</div>
+						<div class="tweet-footer-info">
+							<div>
+								<button v-if="tweet.liked" class="liked-btn" @click="tweet.like -=1" v-on:click="clickLike(index)"   > <i class="fa fa-thumbs-up"></i></button>
+								<button v-if="!tweet.liked"  class="notliked-btn" @click="tweet.like +=1" v-on:click="clickLike(index)"  ><i class="fa fa-thumbs-up"></i></button>
+								<span>{{tweet.like}}</span>
+							</div>
+
+
+							<div><button @click="tweet.retweet +=1" class="btn"><i class="fa fa-retweet"></i></button>
+								<span>{{tweet.retweet}}</span>
+							</div>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+
+		<div id="sidebar">
+			<span class="clickable" v-on:click="clickPlaceholder()">
+				{{ placeholder_message }}
+			</span>
+
+
+			<div>
+				<span class="marked-message" v-if="marked">If</span>
+				<span v-else>Else</span>
+				<button v-on:click="clickButton()">Click</button>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		var app = new Vue({
+			el: '#twitter-main-page',
+			data: {
+				tweets: [],
+				placeholder_message: "Delyar Tabatabai!",
+				marked: false
+			},
+
+			beforeMount() {
+				fetch("cs565_activity_tweet_data.json")
+					.then(response => response.json())
+					.then(data => {
+						data.tweets.forEach(tweet => tweet.liked = false)
+						console.log("data", data);
+						this.tweets = data.tweets;
+					})
+			},
+
+			methods: {
+				clickLike: function (index) {
+					this.tweets[index].liked = !this.tweets[index].liked;
+				},
+
+				clickPlaceholder: function () {
+					this.placeholder_message = "clicked";
+				},
+
+				clickButton: function () {
+					this.marked = true;
+				}
+			}
+		});
+	</script>
+</body>
+
+</html>

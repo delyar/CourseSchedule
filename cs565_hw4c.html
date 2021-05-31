@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>CS 565 HW 4c</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+	<style type="text/css">
+		/* Your CSS goes here. You can change the code below if needed. */
+		html {
+			height: 100%;
+		}
+
+		body {
+			background-color: #dddddd;
+			height: 100%;
+			margin: 0;
+		}
+
+		#wrap {
+			background-color: white;
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			width: 1200px;
+		}
+
+		#header-for-cs565 {
+			background-color: #555555;
+			color: #ffffff;
+			font-family: Arial;
+			font-size: 12px;
+			padding: 5px 10px;
+		}
+
+		#app {
+			padding: 5px;
+		}
+
+		/* Header/Logo Title */
+		.header {
+			background: #D73F09;
+			color: white;
+			font-size: 30px;
+			height: 85px;
+			display: flex;
+			align-items: center;
+		}
+
+		.main-logo {
+			width: 20%;
+			padding: 5px;
+		}
+
+		.profile-icon {
+			float: Right;
+			margin-left: 900px;
+		}
+
+		.second-header {
+			background: #D73F09;
+			color: black;
+			font-size: 10px;
+			height: 30px;
+			display: flex;
+			align-items: center;
+			padding-left: 70px;
+		}
+
+		.flex-row {
+			display: flex;
+			flex-direction: row;
+		}
+
+		.third-header {
+			background: #d85728;
+			color: white;
+			font-size: 10px;
+			height: 30px;
+			display: flex;
+			align-items: center;
+			padding-left: 35px;
+		}
+
+		.dropdown {
+			position: relative;
+			display: inline-block;
+		}
+
+		.selected-course-td {
+			background-color: #90CEFC;
+		}
+
+		.dropdown-content {
+			display: none;
+			position: absolute;
+			background-color: #f1f1f1;
+			min-width: 160px;
+			box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+			z-index: 1;
+		}
+
+		.dropdown-content a {
+			color: black;
+			padding: 12px 16px;
+			text-decoration: none;
+			display: block;
+		}
+
+		.dropdown-content a:hover {
+			background-color: #ddd;
+		}
+
+		.dropdown:hover .dropdown-content {
+			display: block;
+		}
+
+		.dropdown:hover .dropbtn {
+			background-color: #e4e4e4;
+		}
+
+		.time-table-title {
+			margin-left: 250px;
+		}
+
+		/* Table */
+		table {
+			font-family: arial, sans-serif;
+			border-collapse: collapse;
+			width: 100%;
+		}
+
+		th {
+			text-align: left;
+			padding: 8px;
+			background-color: #d87f5f;
+			color: white;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		td {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 5px;
+			height: 70px;
+			position: relative;
+		}
+
+		tr:hover {
+			background-color: #BDE3FF;
+		}
+
+		.hovered {
+			background-color: rgb(246, 130, 87);
+			border-style: dashed;
+		}
+
+		.courses-table {
+			width: 50%;
+			border-right: double;
+			height: 1000px;
+			overflow-y: auto;
+		}
+
+		.schedule-table {
+			background-color: rgb(255, 197, 174);
+			width: 50%;
+			table-layout: fixed;
+			height: 600px;
+		}
+
+		.first-col {
+			width: 10px;
+		}
+
+		.second-col {
+			width: 40px;
+		}
+
+		.third-col {
+			width: 215px;
+		}
+
+		.first-td-course {
+			color: rgb(0, 81, 255);
+			font-family: "Lucida Console", "Courier New", monospace;
+			font-weight: normal;
+			font-size: 20px;
+		}
+
+		.second-td-course {
+			font-weight: normal;
+			font-size: 20px;
+		}
+
+		.major-title {
+			margin-left: 142px;
+		}
+
+		.first-td-schedule {
+			color: rgb(90, 90, 90);
+			font-family: "Lucida Console", "Courier New", monospace;
+			font-weight: normal;
+			font-size: 20px;
+		}
+
+		.two-hour-course-box {
+			background-color: rgb(255, 60, 0);
+			color: white;
+			width: 85px;
+			height: 148px;
+			border: 0.3px;
+			border-color: black;
+			border-style: solid;
+			position: absolute;
+			word-wrap: break-word;
+			top: 5px;
+		}
+
+		.two-hour-course-box-hovered {
+			background-color: rgb(251, 143, 110);
+			color: white;
+			width: 85px;
+			height: 148px;
+			border: 0.3px;
+			border-color: black;
+			border-style: dashed;
+			position: absolute;
+			word-wrap: break-word;
+			top: 5px;
+		}
+
+		.two-hour-course-box-conflicting-second {
+			background-color: rgb(255, 60, 0);
+			color: white;
+			width: 42px;
+			height: 148px;
+			border: 0.3px;
+			border-color: black;
+			border-style: solid;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 43px;
+			top: 5px;
+		}
+
+		.two-hour-course-box-conflicting-second {
+			background-color: rgb(251, 143, 110);
+			color: white;
+			width: 42px;
+			height: 148px;
+			border: 0.3px;
+			border-color: black;
+			border-style: dashed;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 43px;
+			top: 5px;
+		}
+
+		.two-hour-course-box-conflicting-first {
+			background-color: rgb(255, 60, 0);
+			color: white;
+			width: 42px;
+			height: 148px;
+			border: 0.3px;
+			border-color: black;
+			border-style: solid;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 0px;
+			top: 5px;
+		}
+
+		.two-hour-course-box-conflicting-first-hovered {
+			background-color: rgb(251, 143, 110);
+			color: white;
+			width: 42px;
+			height: 148px;
+			border: 0.3px;
+			border-color: black;
+			border-style: dashed;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 0px;
+			top: 5px;
+		}
+
+		.three-hour-course-box {
+			background-color: rgb(255, 60, 0);
+			color: white;
+			width: 85px;
+			height: 220px;
+			border: 0.3px;
+			border-color: black;
+			border-style: solid;
+			position: absolute;
+			word-wrap: break-word;
+			top: 5px;
+		}
+
+		.three-hour-course-box-conflicting-first {
+			background-color: rgb(255, 60, 0);
+			color: white;
+			width: 42px;
+			height: 220px;
+			border: 0.3px;
+			border-color: black;
+			border-style: solid;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 0px;
+			top: 5px;
+		}
+
+		.three-hour-course-box-conflicting-second {
+			background-color: rgb(255, 60, 0);
+			color: white;
+			width: 42px;
+			height: 220px;
+			border: 0.3px;
+			border-color: black;
+			border-style: solid;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 43px;
+			top: 5px;
+		}
+
+		.three-hour-course-box-hovered {
+			background-color: rgb(251, 143, 110);
+			color: white;
+			width: 85px;
+			height: 220px;
+			border: 0.3px;
+			border-color: black;
+			border-style: dashed;
+			position: absolute;
+			word-wrap: break-word;
+			top: 5px;
+		}
+
+		.three-hour-course-box-conflicting-first-hovered {
+			background-color: rgb(251, 143, 110);
+			color: white;
+			width: 42px;
+			height: 220px;
+			border: 0.3px;
+			border-color: black;
+			border-style: dashed;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 0px;
+			top: 5px;
+		}
+
+		.three-hour-course-box-conflicting-second-hovered {
+			background-color: rgb(251, 143, 110);
+			color: white;
+			width: 42px;
+			height: 220px;
+			border: 0.3px;
+			border-color: black;
+			border-style: dashed;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 43px;
+			top: 5px;
+		}
+
+		.four-hour-course-box {
+			background-color: rgb(255, 60, 0);
+			color: white;
+			width: 85px;
+			height: 296px;
+			border: 0.3px;
+			border-color: black;
+			border-style: solid;
+			position: absolute;
+			word-wrap: break-word;
+			top: 5px;
+		}
+
+		.four-hour-course-box-conflicting-first {
+			background-color: rgb(255, 60, 0);
+			color: white;
+			width: 42px;
+			height: 296px;
+			border: 0.3px;
+			border-color: black;
+			border-style: solid;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 0px;
+			top: 5px;
+		}
+
+		.four-hour-course-box-conflicting-second {
+			background-color: rgb(255, 60, 0);
+			color: white;
+			width: 42px;
+			height: 296px;
+			border: 0.3px;
+			border-color: black;
+			border-style: solid;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 43px;
+			top: 5px;
+		}
+
+		.four-hour-course-box-hovered {
+			background-color: rgb(251, 143, 110);
+			color: white;
+			width: 85px;
+			height: 296px;
+			border: 0.3px;
+			border-color: black;
+			border-style: dashed;
+			position: absolute;
+			word-wrap: break-word;
+			top: 5px;
+		}
+
+		.four-hour-course-box-conflicting-first-hovered {
+			background-color: rgb(251, 143, 110);
+			color: white;
+			width: 42px;
+			height: 296px;
+			border: 0.3px;
+			border-color: black;
+			border-style: dashed;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 0px;
+			top: 5px;
+		}
+
+		.four-hour-course-box-conflicting-second-hovered {
+			background-color: rgb(251, 143, 110);
+			color: white;
+			width: 42px;
+			height: 296px;
+			border: 0.3px;
+			border-color: black;
+			border-style: dashed;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 43px;
+			top: 5px;
+		}
+
+		.one-hour-course-box {
+			background-color: rgb(255, 60, 0);
+			color: white;
+			width: 85px;
+			height: 70px;
+			border: 0.3px;
+			border-color: black;
+			border-style: solid;
+			position: absolute;
+			word-wrap: break-word;
+			top: 5px;
+		}
+
+		.one-hour-course-box-hovered {
+			background-color: rgb(251, 143, 110);
+			color: white;
+			width: 85px;
+			height: 70px;
+			border: 0.3px;
+			border-color: black;
+			border-style: dashed;
+			position: absolute;
+			word-wrap: break-word;
+			top: 5px;
+		}
+
+		.one-hour-course-box-conflicting-first {
+			background-color: rgb(255, 60, 0);
+			color: white;
+			width: 42px;
+			height: 70px;
+			border: 0.3px;
+			border-color: black;
+			border-style: solid;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 0px;
+			top: 5px;
+		}
+
+		.one-hour-course-box-conflicting-first-hovered {
+			background-color: rgb(251, 143, 110);
+			color: white;
+			width: 42px;
+			height: 70px;
+			border: 0.3px;
+			border-color: black;
+			border-style: dashed;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 0px;
+			top: 5px;
+		}
+
+		.one-hour-course-box-conflicting-second {
+			background-color: rgb(255, 60, 0);
+			color: white;
+			width: 42px;
+			height: 70px;
+			border: 0.3px;
+			border-color: black;
+			border-style: solid;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 43px;
+			top: 5px;
+		}
+
+		.one-hour-course-box-conflicting-second-hovered {
+			background-color: rgb(251, 143, 110);
+			color: white;
+			width: 42px;
+			height: 70px;
+			border: 0.3px;
+			border-color: black;
+			border-style: dashed;
+			position: absolute;
+			word-wrap: break-word;
+			margin-left: 43px;
+			top: 5px;
+		}
+
+		.tables-container {
+			display: flex;
+			flex-direction: row;
+			background-color: white;
+		}
+
+		.search-input {
+			width: 200px;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Your HTML goes here. You can change the code below if needed. -->
+	<div id="wrap">
+		<div id="header-for-cs565">
+			CS 565 HW 4c (Name: Delyar Tabatabai)
+		</div>
+
+		<div id="app">
+			<div class="header">
+				<img class="main-logo" src="https://oregonstate.edu/themes/osu/homepage/logo.svg" alt="logo" />
+				<i class="fa fa-user profile-icon"></i>
+			</div>
+			<div class="second-header">
+				<h1>Class Search Portal</h1>
+			</div>
+			<div class="third-header flex-row">
+				<h1>Term:</h1>
+				<div class="dropdown">
+					<button class="dropbtn">Spring 2021</button>
+					<div class="dropdown-content">
+						<a>Fall 2021</a>
+						<a>Winter 2022</a>
+						<a>Spring 2022</a>
+					</div>
+				</div>
+				<h1 class="major-title">Search:</h1>
+				<input class="search-input" type="text" @input="addEvent" @change="addEvent" id="search-input" />
+				<h1 class="time-table-title">Your Time Table</h1>
+
+			</div>
+
+			<div class="tables-container">
+				<table class="courses-table">
+					<tr style="height:10px">
+						<th class="first-col"></th>
+						<th class="second-col">Code</th>
+						<th class="third-col">Title</th>
+						<th>Instructor</th>
+						<th>Time</th>
+					</tr>
+					<tr v-for="course in courses" v-on:click="selectCourse(course)" @mouseover="hoverCourse(course)">
+						<td v-if="selectedCourses.includes(course)" class="selected-course-td">
+							<input type="checkbox" id="" name="" value="" checked>
+						</td>
+						<td v-else>
+							<input type="checkbox" id="" name="" value="">
+						</td>
+
+						<td v-if="selectedCourses.includes(course)" class="first-td-course selected-course-td">{{
+							course.code }}</td>
+						<td v-else class="first-td-course">{{ course.code }}</td>
+
+						<td v-if="selectedCourses.includes(course)" class="second-td-course selected-course-td">{{
+							course.title }}</td>
+						<td v-else class="second-td-course">{{ course.title }}</td>
+
+						<td v-if="selectedCourses.includes(course)" class="selected-course-td">{{course.instructor}}
+						</td>
+						<td v-else>{{course.instructor}}</td>
+
+						<td v-if="selectedCourses.includes(course)" class="selected-course-td">
+							<div v-for="time in course.times">
+								{{time["day"] + parseInt(time["hour"]) + ' - ' + (parseInt(time["hour"]) +
+								parseInt(time["duration"]))}}
+							</div>
+						</td>
+						<td v-else>
+							<div v-for="time in course.times">
+								{{time["day"] + parseInt(time["hour"]) + ' - ' + (parseInt(time["hour"]) +
+								parseInt(time["duration"]))}}
+							</div>
+						</td>
+					</tr>
+
+				</table>
+				<table class="schedule-table">
+					<tr>
+						<th></th>
+						<th>MON</th>
+						<th>TUE</th>
+						<th>WED</th>
+						<th>THU</th>
+						<th>FRI</th>
+					</tr>
+					<tr v-for="hour in hours">
+						<td class="first-td-schedule">{{hour}}</td>
+						<td v-for="day in days">
+							<!-- HOVER OVER COURSES -->
+
+							<!-- TWO HOUR COURSES -->
+
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times[0].day == day) && hoveredCourse.times[0].hour == hour && hoveredCourse.times[0].duration == 2"
+								class="two-hour-course-box-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 49)}}
+							</div>
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 1) && (hoveredCourse.times[1].day == day) && hoveredCourse.times[1].hour == hour && hoveredCourse.times[1].duration == 2"
+								class="two-hour-course-box-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 49)}}
+							</div>
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 2) && (hoveredCourse.times[2].day == day) && hoveredCourse.times[2].hour == hour && hoveredCourse.times[2].duration == 2"
+								class="two-hour-course-box-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 49)}}
+							</div>
+
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times[0].day == day) && hoveredCourse.times[0].hour == hour && hoveredCourse.times[0].duration == 2 && numberofConflictingSelectedCourses(day, hour) == 2"
+								class="two-hour-course-box-conflicting-first-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 14)}}
+							</div>
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 1) && (hoveredCourse.times[1].day == day) && hoveredCourse.times[1].hour == hour && hoveredCourse.times[1].duration == 2 "
+								class="two-hour-course-box-conflicting-first-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 14)}}
+							</div>
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 2) && (hoveredCourse.times[2].day == day) && hoveredCourse.times[2].hour == hour && hoveredCourse.times[2].duration == 2"
+								class="two-hour-course-box-conflicting-first-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 14)}}
+							</div>
+
+							<span
+								v-if="(hoveredCourse != null) && (hoveredCourse.times[0].day == day) && hoveredCourse.times[0].hour == hour && hoveredCourse.times[0].duration == 2 && numberofConflictingSelectedCourses(day, hour) == 2"
+								class="two-hour-course-box-conflicting-second-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 14)}}
+							</span>
+							<span
+								v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 1) && (hoveredCourse.times[1].day == day) && hoveredCourse.times[1].hour == hour && hoveredCourse.times[1].duration == 2"
+								class="two-hour-course-box-conflicting-second-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 14)}}
+							</span>
+							<span
+								v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 2) && (hoveredCourse.times[2].day == day) && hoveredCourse.times[2].hour == hour && hoveredCourse.times[1].duration == 2"
+								class="two-hour-course-box-conflicting-second-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 14)}}
+							</span>
+
+							<!-- LESS THAN TWO HOUR COURSES -->
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times[0].day == day) && hoveredCourse.times[0].hour == hour && (hoveredCourse.times[0].duration < 2)"
+								class="one-hour-course-box-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 10)}}
+							</div>
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 1) && (hoveredCourse.times[1].day == day) && hoveredCourse.times[1].hour == hour"
+								class="one-hour-course-box-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 10)}}
+							</div>
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 2) && (hoveredCourse.times[2].day == day) && hoveredCourse.times[2].hour == hour"
+								class="one-hour-course-box-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 10)}}
+							</div>
+
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times[0].day == day) && hoveredCourse.times[0].hour == hour && (hoveredCourse.times[0].duration < 2)"
+								class="one-hour-course-box-conflicting-first-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 6)}}
+							</div>
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 1) && (hoveredCourse.times[1].day == day) && hoveredCourse.times[1].hour == hour"
+								class="one-hour-course-box-conflicting-first-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 6)}}
+							</div>
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 2) && (hoveredCourse.times[2].day == day) && hoveredCourse.times[2].hour == hour"
+								class="one-hour-course-box-conflicting-first-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 6)}}
+							</div>
+
+							<span
+								v-if="(hoveredCourse != null) && (hoveredCourse.times[0].day == day) && hoveredCourse.times[0].hour == hour && (hoveredCourse.times[0].duration < 2)"
+								class="one-hour-course-box-conflicting-second-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 8)}}
+							</span>
+							<span
+								v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 1) && (hoveredCourse.times[1].day == day) && hoveredCourse.times[1].hour == hour"
+								class="one-hour-course-box-conflicting-second-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 8)}}
+							</span>
+							<span
+								v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 2) && (hoveredCourse.times[2].day == day) && hoveredCourse.times[2].hour == hour && (hoveredCourse.times[2].duration < 2)"
+								class="one-hour-course-box-conflicting-second-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title.substring(0, 8)}}
+							</span>
+
+							<!-- FOUR HOUR COURSES -->
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times[0].day == day) && hoveredCourse.times[0].hour == hour && (hoveredCourse.times[0].duration == 4)"
+								class="four-hour-course-box-hovered">{{hoveredCourse.code + '-' + hoveredCourse.title}}
+							</div>
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 1) && (hoveredCourse.times[1].day == day) && hoveredCourse.times[1].hour == hour && (hoveredCourse.times[1].duration == 4)"
+								class="four-hour-course-box-hovered">{{hoveredCourse.code + '-' + hoveredCourse.title}}
+							</div>
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 2) && (hoveredCourse.times[2].day == day) && hoveredCourse.times[2].hour == hour && (hoveredCourse.times[2].duration == 4)"
+								class="four-hour-course-box-hovered">{{hoveredCourse.code + '-' + hoveredCourse.title}}
+							</div>
+
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times[0].day == day) && hoveredCourse.times[0].hour == hour && (hoveredCourse.times[0].duration == 4) && numberofConflictingSelectedCourses(day, hour) == 2"
+								class="four-hour-course-box-conflicting-first-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title}}
+							</div>
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 1) && (hoveredCourse.times[1].day == day) && hoveredCourse.times[1].hour == hour && (hoveredCourse.times[1].duration == 4) && numberofConflictingSelectedCourses(day, hour) == 2"
+								class="four-hour-course-box-conflicting-first-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title}}
+							</div>
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 2) && (hoveredCourse.times[2].day == day) && hoveredCourse.times[2].hour == hour && (hoveredCourse.times[2].duration == 4) && numberofConflictingSelectedCourses(day, hour) == 2"
+								class="four-hour-course-box-conflicting-first-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title}}
+							</div>
+
+							<span
+								v-if="(hoveredCourse != null) && (hoveredCourse.times[0].day == day) && hoveredCourse.times[0].hour == hour && (hoveredCourse.times[0].duration == 4) && numberofConflictingSelectedCourses(day, hour) == 2"
+								class="four-hour-course-box-conflicting-second-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title}}
+							</span>
+							<span
+								v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 1) && (hoveredCourse.times[1].day == day) && hoveredCourse.times[1].hour == hour && (hoveredCourse.times[1].duration == 4)"
+								class="four-hour-course-box-conflicting-second-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title}}
+							</span>
+							<span
+								v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 2) && (hoveredCourse.times[2].day == day) && hoveredCourse.times[2].hour == hour && (hoveredCourse.times[2].duration == 4)"
+								class="four-hour-course-box-conflicting-second-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title}}
+							</span>
+
+							<!-- Three HOUR COURSES -->
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times[0].day == day) && hoveredCourse.times[0].hour == hour && (hoveredCourse.times[0].duration == 3)"
+								class="three-hour-course-box-hovered">{{hoveredCourse.code + '-' + hoveredCourse.title}}
+							</div>
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 1) && (hoveredCourse.times[1].day == day) && hoveredCourse.times[1].hour == hour && (hoveredCourse.times[1].duration == 3)"
+								class="three-hour-course-box-hovered">{{hoveredCourse.code + '-' + hoveredCourse.title}}
+							</div>
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 2) && (hoveredCourse.times[2].day == day) && hoveredCourse.times[2].hour == hour && (hoveredCourse.times[2].duration == 3)"
+								class="three-hour-course-box-hovered">{{hoveredCourse.code + '-' + hoveredCourse.title}}
+							</div>
+
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times[0].day == day) && hoveredCourse.times[0].hour == hour && (hoveredCourse.times[0].duration == 3) && numberofConflictingSelectedCourses(day, hour) == 2"
+								class="three-hour-course-box-conflicting-first-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title}}
+							</div>
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 1) && (hoveredCourse.times[1].day == day) && hoveredCourse.times[1].hour == hour && (hoveredCourse.times[1].duration == 3) && numberofConflictingSelectedCourses(day, hour) == 2"
+								class="three-hour-course-box-conflicting-first-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title}}
+							</div>
+							<div v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 2) && (hoveredCourse.times[2].day == day) && hoveredCourse.times[2].hour == hour && (hoveredCourse.times[2].duration == 3) && numberofConflictingSelectedCourses(day, hour) == 2"
+								class="three-hour-course-box-conflicting-first-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title}}
+							</div>
+
+							<span
+								v-if="(hoveredCourse != null) && (hoveredCourse.times[0].day == day) && hoveredCourse.times[0].hour == hour && (hoveredCourse.times[0].duration == 3) && numberofConflictingSelectedCourses(day, hour) == 2"
+								class="three-hour-course-box-conflicting-second-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title}}
+							</span>
+							<span
+								v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 1) && (hoveredCourse.times[1].day == day) && hoveredCourse.times[1].hour == hour && (hoveredCourse.times[1].duration == 3)"
+								class="three-hour-course-box-conflicting-second-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title}}
+							</span>
+							<span
+								v-if="(hoveredCourse != null) && (hoveredCourse.times.length > 2) && (hoveredCourse.times[2].day == day) && hoveredCourse.times[2].hour == hour && (hoveredCourse.times[2].duration == 3)"
+								class="three-hour-course-box-conflicting-second-hovered">{{hoveredCourse.code + '-' +
+								hoveredCourse.title}}
+							</span>
+
+
+							<!-- HOVER OVER COURSES END -->
+
+							<div v-for="course in selectedCourses">
+
+								<!-- TWO HOUR COURSES -->
+
+								<div v-if="(course.times[0].day == day) && course.times[0].hour == hour && course.times[0].duration == 2 && numberofConflictingSelectedCourses(day, hour) == 1"
+									class="two-hour-course-box">{{course.code + '-' + course.title.substring(0, 49)}}
+								</div>
+								<div v-if="(course.times.length > 1) && (course.times[1].day == day) && course.times[1].hour == hour && course.times[1].duration == 2 && numberofConflictingSelectedCourses(day, hour) == 1"
+									class="two-hour-course-box">{{course.code + '-' + course.title.substring(0, 49)}}
+								</div>
+								<div v-if="(course.times.length > 2) && (course.times[2].day == day) && course.times[2].hour == hour && course.times[2].duration == 2 && numberofConflictingSelectedCourses(day, hour) == 1"
+									class="two-hour-course-box">{{course.code + '-' + course.title.substring(0, 49)}}
+								</div>
+
+								<div v-if="(course.times[0].day == day) && course.times[0].hour == hour && course.times[0].duration == 2 && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 0 "
+									class="two-hour-course-box-conflicting-first">{{course.code + '-' +
+									course.title.substring(0, 14)}}
+								</div>
+								<div v-if="(course.times.length > 1) && (course.times[1].day == day) && course.times[1].hour == hour && course.times[1].duration == 2 && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 0 "
+									class="two-hour-course-box-conflicting-first">{{course.code + '-' +
+									course.title.substring(0, 14)}}
+								</div>
+								<div v-if="(course.times.length > 2) && (course.times[2].day == day) && course.times[2].hour == hour && course.times[2].duration == 2 && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 0 "
+									class="two-hour-course-box-conflicting-first">{{course.code + '-' +
+									course.title.substring(0, 14)}}
+								</div>
+
+								<span
+									v-if="(course.times[0].day == day) && course.times[0].hour == hour && course.times[0].duration == 2 && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 1"
+									class="two-hour-course-box-conflicting-second">{{course.code + '-' +
+									course.title.substring(0, 14)}}
+								</span>
+								<span
+									v-if="(course.times.length > 1) && (course.times[1].day == day) && course.times[1].hour == hour && course.times[1].duration == 2 && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 1"
+									class="two-hour-course-box-conflicting-second">{{course.code + '-' +
+									course.title.substring(0, 14)}}
+								</span>
+								<span
+									v-if="(course.times.length > 2) && (course.times[2].day == day) && course.times[2].hour == hour && course.times[1].duration == 2 && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 1"
+									class="two-hour-course-box-conflicting-second">{{course.code + '-' +
+									course.title.substring(0, 14)}}
+								</span>
+
+								<!-- LESS THAN TWO HOUR COURSES -->
+								<div v-if="(course.times[0].day == day) && course.times[0].hour == hour && (course.times[0].duration < 2) && numberofConflictingSelectedCourses(day, hour) == 1"
+									class="one-hour-course-box">{{course.code + '-' + course.title.substring(0, 10)}}
+								</div>
+								<div v-if="(course.times.length > 1) && (course.times[1].day == day) && course.times[1].hour == hour && (course.times[1].duration < 2) && numberofConflictingSelectedCourses(day, hour) == 1"
+									class="one-hour-course-box">{{course.code + '-' + course.title.substring(0, 10)}}
+								</div>
+								<div v-if="(course.times.length > 2) && (course.times[2].day == day) && course.times[2].hour == hour && (course.times[2].duration < 2) && numberofConflictingSelectedCourses(day, hour) == 1"
+									class="one-hour-course-box">{{course.code + '-' + course.title.substring(0, 10)}}
+								</div>
+
+								<div v-if="(course.times[0].day == day) && course.times[0].hour == hour && (course.times[0].duration < 2) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 0 "
+									class="one-hour-course-box-conflicting-first">{{course.code + '-' +
+									course.title.substring(0, 6)}}
+								</div>
+								<div v-if="(course.times.length > 1) && (course.times[1].day == day) && course.times[1].hour == hour && (course.times[1].duration < 2) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 0 "
+									class="one-hour-course-box-conflicting-first">{{course.code + '-' +
+									course.title.substring(0, 6)}}
+								</div>
+								<div v-if="(course.times.length > 2) && (course.times[2].day == day) && course.times[2].hour == hour && (course.times[2].duration < 2) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 0 "
+									class="one-hour-course-box-conflicting-first">{{course.code + '-' +
+									course.title.substring(0, 6)}}
+								</div>
+
+								<span
+									v-if="(course.times[0].day == day) && course.times[0].hour == hour && (course.times[0].duration < 2) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 1"
+									class="one-hour-course-box-conflicting-second">{{course.code + '-' +
+									course.title.substring(0, 8)}}
+								</span>
+								<span
+									v-if="(course.times.length > 1) && (course.times[1].day == day) && course.times[1].hour == hour && (course.times[1].duration < 2) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 1"
+									class="one-hour-course-box-conflicting-second">{{course.code + '-' +
+									course.title.substring(0, 8)}}
+								</span>
+								<span
+									v-if="(course.times.length > 2) && (course.times[2].day == day) && course.times[2].hour == hour && (course.times[2].duration < 2) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 1"
+									class="one-hour-course-box-conflicting-second">{{course.code + '-' +
+									course.title.substring(0, 8)}}
+								</span>
+
+								<!-- FOUR HOUR COURSES -->
+								<div v-if="(course.times[0].day == day) && course.times[0].hour == hour && (course.times[0].duration == 4) && numberofConflictingSelectedCourses(day, hour) == 1"
+									class="four-hour-course-box">{{course.code + '-' + course.title}}
+								</div>
+								<div v-if="(course.times.length > 1) && (course.times[1].day == day) && course.times[1].hour == hour && (course.times[1].duration == 4) && numberofConflictingSelectedCourses(day, hour) == 1"
+									class="four-hour-course-box">{{course.code + '-' + course.title}}
+								</div>
+								<div v-if="(course.times.length > 2) && (course.times[2].day == day) && course.times[2].hour == hour && (course.times[2].duration == 4) && numberofConflictingSelectedCourses(day, hour) == 1"
+									class="four-hour-course-box">{{course.code + '-' + course.title}}
+								</div>
+
+								<div v-if="(course.times[0].day == day) && course.times[0].hour == hour && (course.times[0].duration == 4) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 0 "
+									class="four-hour-course-box-conflicting-first">{{course.code + '-' +
+									course.title}}
+								</div>
+								<div v-if="(course.times.length > 1) && (course.times[1].day == day) && course.times[1].hour == hour && (course.times[1].duration == 4) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 0 "
+									class="four-hour-course-box-conflicting-first">{{course.code + '-' +
+									course.title}}
+								</div>
+								<div v-if="(course.times.length > 2) && (course.times[2].day == day) && course.times[2].hour == hour && (course.times[2].duration == 4) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 0 "
+									class="four-hour-course-box-conflicting-first">{{course.code + '-' +
+									course.title}}
+								</div>
+
+								<span
+									v-if="(course.times[0].day == day) && course.times[0].hour == hour && (course.times[0].duration == 4) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 1"
+									class="four-hour-course-box-conflicting-second">{{course.code + '-' +
+									course.title}}
+								</span>
+								<span
+									v-if="(course.times.length > 1) && (course.times[1].day == day) && course.times[1].hour == hour && (course.times[1].duration == 4) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 1"
+									class="four-hour-course-box-conflicting-second">{{course.code + '-' +
+									course.title}}
+								</span>
+								<span
+									v-if="(course.times.length > 2) && (course.times[2].day == day) && course.times[2].hour == hour && (course.times[2].duration == 4) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 1"
+									class="four-hour-course-box-conflicting-second">{{course.code + '-' +
+									course.title}}
+								</span>
+
+								<!-- Three HOUR COURSES -->
+								<div v-if="(course.times[0].day == day) && course.times[0].hour == hour && (course.times[0].duration == 3) && numberofConflictingSelectedCourses(day, hour) == 1"
+									class="three-hour-course-box">{{course.code + '-' + course.title}}
+								</div>
+								<div v-if="(course.times.length > 1) && (course.times[1].day == day) && course.times[1].hour == hour && (course.times[1].duration == 3) && numberofConflictingSelectedCourses(day, hour) == 1"
+									class="three-hour-course-box">{{course.code + '-' + course.title}}
+								</div>
+								<div v-if="(course.times.length > 2) && (course.times[2].day == day) && course.times[2].hour == hour && (course.times[2].duration == 3) && numberofConflictingSelectedCourses(day, hour) == 1"
+									class="three-hour-course-box">{{course.code + '-' + course.title}}
+								</div>
+
+								<div v-if="(course.times[0].day == day) && course.times[0].hour == hour && (course.times[0].duration == 3) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 0 "
+									class="three-hour-course-box-conflicting-first">{{course.code + '-' +
+									course.title}}
+								</div>
+								<div v-if="(course.times.length > 1) && (course.times[1].day == day) && course.times[1].hour == hour && (course.times[1].duration == 3) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 0 "
+									class="three-hour-course-box-conflicting-first">{{course.code + '-' +
+									course.title}}
+								</div>
+								<div v-if="(course.times.length > 2) && (course.times[2].day == day) && course.times[2].hour == hour && (course.times[2].duration == 3) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 0 "
+									class="three-hour-course-box-conflicting-first">{{course.code + '-' +
+									course.title}}
+								</div>
+
+								<span
+									v-if="(course.times[0].day == day) && course.times[0].hour == hour && (course.times[0].duration == 3) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 1"
+									class="three-hour-course-box-conflicting-second">{{course.code + '-' +
+									course.title}}
+								</span>
+								<span
+									v-if="(course.times.length > 1) && (course.times[1].day == day) && course.times[1].hour == hour && (course.times[1].duration == 3) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 1"
+									class="three-hour-course-box-conflicting-second">{{course.code + '-' +
+									course.title}}
+								</span>
+								<span
+									v-if="(course.times.length > 2) && (course.times[2].day == day) && course.times[2].hour == hour && (course.times[2].duration == 3) && numberofConflictingSelectedCourses(day, hour) == 2 && indexOfCouseInSelectedConflictingCourses(course, day, hour) == 1"
+									class="three-hour-course-box-conflicting-second">{{course.code + '-' +
+									course.title}}
+								</span>
+							</div>
+						</td>
+					</tr>
+
+				</table>
+			</div>
+
+		</div>
+	</div>
+
+	<script type="text/javascript">
+
+		// Example code. You can change it.
+		var app = new Vue({
+			el: '#app',
+			data: {
+				courses: [],
+				days: [],
+				hours: [],
+				selectedCourses: [],
+				originalCourses: [],
+				hoveredCourse: null,
+			},
+
+			beforeMount() {
+				fetch("cs565_hw4c_schedule_data.json")
+					.then(response => response.json())
+					.then(data => {
+						this.courses = data.courses;
+						this.originalCourses = data.courses;
+						this.hours = data.hours;
+						this.days = data.days;
+					})
+			},
+
+			methods: {
+				selectCourse: function (course) {
+					if (!this.selectedCourses.includes(course)) {
+						// ADD COURSE
+						// if (this.numberOfselectedCoursesConflictingWithThisCourse(course) == 2) {
+						// 	alert("Adding This Course To Your Schedule Makes More Than 2 Conflicting Courses!");
+						// } else {
+						// }
+						this.selectedCourses.push(course);
+					} else {
+						// REMOVE COURSE
+						this.selectedCourses = this.selectedCourses.filter(function (item) {
+							return item !== course
+						})
+					}
+
+				},
+
+				hoverCourse: function (course) {
+					this.hoveredCourse = course;
+				},
+
+				addEvent({ type, target }) {
+					const event = {
+						type,
+						isCheckbox: target.type === 'checkbox',
+						target: {
+							value: target.value,
+							checked: target.checked
+						}
+					}
+					let keyword = event.target.value;
+					this.courses = this.originalCourses.filter(course => (course.title.toLowerCase().includes(keyword.toLowerCase())) || (course.code.toLowerCase().includes(keyword.toLowerCase())));
+				},
+
+				conflictingSelectedCourses: function (day, hour) {
+					// var conflictingCourses = this.selectedCourses.filter(course => (course.times[0].day == day && course.times[0].hour == hour) || (course.times[1].day == day && course.times[1].hour == hour));
+					var conflictingCourses = this.selectedCourses.filter(function (course) {
+						if (course.times.length == 1) {
+							return (course.times[0].day == day && course.times[0].hour == hour);
+						} else if (course.times.length == 2) {
+							return ((course.times[0].day == day && course.times[0].hour == hour) || (course.times[1].day == day && course.times[1].hour == hour));
+						} else {
+							return ((course.times[0].day == day && course.times[0].hour == hour) || (course.times[1].day == day && course.times[1].hour == hour) || (course.times[2].day == day && course.times[2].hour == hour));
+						}
+					});
+
+					return conflictingCourses;
+				},
+
+				numberofConflictingSelectedCourses: function (day, hour) {
+					return this.conflictingSelectedCourses(day, hour).length;
+				},
+
+				indexOfCouseInSelectedConflictingCourses: function (course, day, hour) {
+					if (this.conflictingSelectedCourses(day, hour).includes(course)) {
+						return this.conflictingSelectedCourses(day, hour).indexOf(course);
+					} else {
+						return 100;
+					}
+				},
+
+				selectedCoursesConflictingWithThisCourse: function (myCourse) {
+					var selectedCoursesWithSameDayAndHour = [];
+
+					for (selectedCourse in this.selectedCourses) {
+						for (selectedCourseTime in selectedCourse.times) {
+							for (myTime in myCourse.times) {
+								if (selectedCourseTime.day == myTime.day && selectedCourseTime.hour == myTime.hour) {
+									selectedCoursesWithSameDayAndHour.push(selectedCourse);
+								}
+							}
+						}
+					}
+
+					return selectedCoursesWithSameDayAndHour;
+
+				},
+
+				numberOfselectedCoursesConflictingWithThisCourse: function (myCourse) {
+					console.log(this.selectedCoursesConflictingWithThisCourse(myCourse).length);
+					return this.selectedCoursesConflictingWithThisCourse(myCourse).length;
+				}
+
+			}
+		});
+
+
+
+
+
+	</script>
+</body>
+
+</html>
